@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 8 Primitives, Rendered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0C0A09; --surface: #1E1916; --surface2: #14100E;
+    --text: #F6F1EE; --muted: #A99F99; --dim: #6E6661;
+    --pink: #E5337E; --gold: #DF9439; --gain: #1FB36A; --loss: #E0003B;
+    --border: rgba(246,241,238,0.12); --border2: rgba(246,241,238,0.07);
+    --glass-bg: rgba(28,23,20,0.5); --glass-border: rgba(246,241,238,0.14);
+    --grad: linear-gradient(to right, #E5337E 0%, #DF9439 100%);
+    --sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6;
+    background-image: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(229,51,126,0.12), transparent 70%);
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 72px 40px 120px; }
+
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--pink); margin-bottom: 14px; }
+  h1 { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+  h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { color: var(--muted); font-size: 16.5px; max-width: 740px; margin-top: 16px; }
+  .lede b { color: var(--text); }
+
+  section { margin-top: 88px; }
+  .num { font-family: var(--mono); font-size: 13px; color: var(--gold); letter-spacing: 0.18em; margin-bottom: 8px; }
+  h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .why { color: var(--muted); font-size: 15px; max-width: 780px; margin-bottom: 30px; }
+  .why strong { color: var(--text); font-weight: 600; }
+
+  .cards { display: flex; gap: 20px; flex-wrap: wrap; align-items: stretch; }
+  .demo {
+    position: relative; width: 262px; flex: none;
+    background: var(--bg);
+    background-image: radial-gradient(circle, rgba(246,241,238,0.05) 1px, transparent 1px);
+    background-size: 18px 18px;
+    border: 1px solid var(--border2); border-radius: 16px;
+    padding: 30px 18px 18px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .demo.wide { width: 356px; }
+  .kindtag {
+    position: absolute; top: -10px; left: 14px;
+    font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+    background: var(--surface); border: 1px solid rgba(229,51,126,0.45); color: #f1a9c8;
+    border-radius: 6px; padding: 2px 9px;
+  }
+  .kindtag.new { border-color: rgba(31,179,106,0.5); color: #8fd6ae; }
+  .demo .note { font-size: 11.5px; color: var(--dim); margin-top: auto; padding-top: 10px; }
+  .demo .note b { color: var(--muted); }
+
+  /* glass card core */
+  .glass {
+    background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px;
+    box-shadow: 0 12px 38px -16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(246,241,238,0.08);
+    padding: 14px 16px;
+  }
+  .lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .val { font-family: var(--mono); font-weight: 700; font-size: 34px; line-height: 1.1; color: var(--text); }
+  .sub { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 3px; }
+  .up { color: var(--gain); } .down { color: var(--loss); } .goldtx { color: var(--gold); }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
+    background: rgba(24,20,17,0.85); border: 1px solid var(--glass-border); border-radius: 999px;
+    padding: 4px 10px; font-family: var(--mono); font-size: 9.5px; color: var(--muted);
+  }
+  .pill .d { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+  .d.neg { background: var(--loss); box-shadow: 0 0 8px rgba(224,0,59,0.6); }
+  .d.pos { background: var(--gain); box-shadow: 0 0 8px rgba(31,179,106,0.6); }
+  .d.gld { background: var(--gold); box-shadow: 0 0 8px rgba(223,148,57,0.6); }
+
+  /* facts rows */
+  .frow { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--border2); }
+  .frow:last-child { border-bottom: 0; }
+  .frow .k { font-size: 11px; color: var(--muted); }
+  .frow .v { font-family: var(--mono); font-size: 12.5px; font-weight: 700; color: var(--text); }
+
+  /* ratio bars */
+  .brow { display: flex; flex-direction: column; gap: 3px; padding: 5px 0; }
+  .bmeta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9.5px; color: var(--muted); }
+  .bmeta .self { color: var(--gold); font-weight: 700; }
+  .btrack { height: 5px; background: rgba(246,241,238,0.08); border-radius: 99px; overflow: hidden; }
+  .bfill { height: 100%; border-radius: 99px; background: var(--grad); }
+  .bfill.flat { background: rgba(169,159,153,0.45); }
+
+  /* ranked rows */
+  .rrow { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border2); }
+  .rrow:last-child { border-bottom: 0; }
+  .rrow .rank { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--gold); width: 16px; flex: none; }
+  .rrow .name { font-size: 11.5px; color: var(--text); flex: 1; }
+  .rrow .rv { font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+  .rrow .delta { font-family: var(--mono); font-size: 9.5px; width: 52px; text-align: right; flex: none; }
+  .verdict { font-family: var(--mono); font-size: 8.5px; font-weight: 700; padding: 1px 7px; border-radius: 5px; flex: none; }
+  .verdict.disc { background: rgba(31,179,106,0.14); color: var(--gain); border: 1px solid rgba(31,179,106,0.35); }
+  .verdict.prem { background: rgba(224,0,59,0.12); color: #ff7d9d; border: 1px solid rgba(224,0,59,0.35); }
+
+  /* charts */
+  .barsviz { display: flex; align-items: flex-end; gap: 7px; height: 74px; }
+  .barsviz i { flex: 1; border-radius: 4px 4px 0 0; background: rgba(229,51,126,0.45); }
+  .barsviz i.hot { background: var(--grad); }
+  svg.spark { display: block; }
+
+  /* prose */
+  .kicker { font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); }
+  .hl { font-weight: 800; font-size: 19px; line-height: 1.25; letter-spacing: -0.01em; }
+  .hl .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .bodyp { font-size: 11.5px; color: var(--muted); line-height: 1.6; }
+  .bull { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .bull li { display: flex; gap: 9px; font-size: 11.5px; color: var(--muted); align-items: baseline; }
+  .bull li::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: var(--grad); flex: none; transform: translateY(0.5px); }
+  .quote { font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text); border-left: 2.5px solid; border-image: linear-gradient(to bottom, #E5337E, #DF9439) 1; padding-left: 12px; }
+  .attr { font-family: var(--mono); font-size: 9.5px; color: var(--dim); margin-top: 6px; }
+  .insightlab { display: inline-block; font-family: var(--mono); font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(223,148,57,0.13); border: 1px solid rgba(223,148,57,0.35); color: var(--gold); border-radius: 5px; padding: 2px 8px; margin-bottom: 8px; }
+
+  /* event */
+  .verb { display: inline-flex; align-self: flex-start; font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 6px; }
+  .verb.buy { background: rgba(31,179,106,0.15); color: var(--gain); border: 1px solid rgba(31,179,106,0.4); }
+  .verb.neutral { background: rgba(223,148,57,0.13); color: var(--gold); border: 1px solid rgba(223,148,57,0.4); }
+  .holder { font-size: 12.5px; font-weight: 700; }
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fcell { background: rgba(246,241,238,0.04); border: 1px solid var(--border2); border-radius: 9px; padding: 7px 9px; }
+  .fcell .k { font-family: var(--mono); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+  .fcell .v { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); }
+  .tl { display: flex; flex-direction: column; gap: 0; }
+  .tlrow { display: flex; gap: 12px; position: relative; padding: 0 0 14px 0; }
+  .tlrow::before { content: ""; position: absolute; left: 4px; top: 12px; bottom: 0; width: 1.5px; background: var(--border); }
+  .tlrow:last-child::before { display: none; }
+  .tlrow .dot2 { width: 9px; height: 9px; border-radius: 50%; background: var(--grad); flex: none; margin-top: 3px; box-shadow: 0 0 10px rgba(229,51,126,0.5); }
+  .tlrow .dt { font-family: var(--mono); font-size: 9px; color: var(--gold); }
+  .tlrow .ev { font-size: 11px; color: var(--muted); line-height: 1.45; }
+
+  /* media */
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(28,23,20,0.8); border: 1px solid var(--glass-border); border-radius: 999px; padding: 5px 13px; font-family: var(--mono); font-size: 11px; font-weight: 700; }
+  .clogo { width: 15px; height: 15px; border-radius: 50%; background: var(--grad); }
+  .logocard { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 14px; }
+  .biglogo { width: 52px; height: 52px; border-radius: 14px; background: var(--grad); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff; }
+  .imgmock { height: 102px; border-radius: 10px; background: linear-gradient(135deg, rgba(229,51,126,0.4), rgba(223,148,57,0.4)), repeating-linear-gradient(45deg, rgba(246,241,238,0.06) 0 10px, transparent 10px 20px); border: 1px solid var(--border); display: flex; align-items: flex-end; padding: 8px; }
+  .imgmock span { font-family: var(--mono); font-size: 8.5px; color: rgba(255,255,255,0.8); }
+
+  /* anatomy diagram */
+  .anatomy { display: flex; gap: 34px; align-items: center; flex-wrap: wrap; margin-bottom: 36px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 18px; padding: 28px; }
+  .anat-card { position: relative; width: 280px; flex: none; }
+  .zone { position: relative; border: 1.5px dashed rgba(223,148,57,0.55); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; }
+  .zone .ztag { position: absolute; right: -8px; top: 50%; transform: translate(100%, -50%); font-family: var(--mono); font-size: 9px; color: var(--gold); white-space: nowrap; }
+  .anat-notes { flex: 1; min-width: 300px; color: var(--muted); font-size: 14px; }
+  .anat-notes b { color: var(--text); }
+  .anat-notes ul { margin: 10px 0 0 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
+
+  .foot { margin-top: 100px; padding-top: 24px; border-top: 1px solid var(--border2); color: var(--dim); font-size: 13px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Sectors Content Studio · Editor Overhaul Concept · Part 2</div>
+  <h1>The 8 primitives, <span class="grad">rendered.</span></h1>
+  <p class="lede">Every card below is the <b>same primitive wearing different data</b>. The tag on each card is the semantic kind the AI and the editor speak. Nothing about the language changes; what changes is that 33 implementations become 8, so grid sizing, selection, callouts and theming get built once each.</p>
+
+  <!-- ============ 1. BIG NUMBER ============ -->
+  <section>
+    <div class="num">P1</div>
+    <h2>BigNumber</h2>
+    <p class="why">One number that owns the moment. Anatomy: <strong>label, value, context line, optional callout pill</strong>. Whether the number is a yield, an upside or a sector gap is just data.</p>
+
+    <div class="anatomy">
+      <div class="anat-card">
+        <div class="glass" style="padding: 16px;">
+          <div class="zone"><div class="lbl">Dividend Yield (TTM)</div><span class="ztag">&larr; LABEL</span></div>
+          <div class="zone"><div class="val" style="font-size: 44px;">9.0%</div><span class="ztag">&larr; VALUE (size from span)</span></div>
+          <div class="zone"><div class="sub up">+0.8pp vs FY24</div><span class="ztag">&larr; CONTEXT</span></div>
+          <div class="zone" style="margin-bottom: 0;"><span class="pill" style="margin-top: 0;"><span class="d gld"></span>Payout drawn from reserves</span><span class="ztag">&larr; CALLOUT</span></div>
+        </div>
+      </div>
+      <div class="anat-notes">
+        <b>The shared skeleton.</b> Each zone is owned by the primitive, so it behaves identically everywhere:
+        <ul>
+          <li>VALUE typography steps with the grid span (S / M / L from part 1)</li>
+          <li>CALLOUT is one consistent pill channel, below the card, always editable</li>
+          <li>Numbers always arrive from Sectors via the figure resolver, never typed by the model</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag">stat</span>
+        <div class="glass"><div class="lbl">Dividend Yield (TTM)</div><div class="val">9.0%</div><div class="sub up">+0.8pp vs FY24</div></div>
+        <div class="note">Any of the <b>28 metrics</b>: pick from a dropdown, value fetched live.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">upside</span>
+        <div class="glass"><div class="lbl">Upside to Intrinsic</div><div class="val up">+31.7%</div><div class="sub">Rp 2,620 &rarr; Rp 3,450 DCF</div></div>
+        <div class="note">Same skeleton; context line shows the <b>price &rarr; target</b> pair.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">vsSector</span>
+        <div class="glass"><div class="lbl">Fwd P/E vs Sector</div><div class="val">9.0x</div><div class="sub"><span class="goldtx">sector median 15.6x</span> &middot; <span class="up">discount</span></div></div>
+        <div class="note">Context line carries the <b>comparison + verdict</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. FACTS CARD ============ -->
+  <section>
+    <div class="num">P2</div>
+    <h2>FactsCard</h2>
+    <p class="why">Label + value pairs in one glass card. The kinds differ only in <strong>which facts arrive and the card's title</strong>.</p>
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag">keyFacts</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 4px;">Key Facts</div>
+          <div class="frow"><span class="k">Market Cap</span><span class="v">Rp 265T</span></div>
+          <div class="frow"><span class="k">Forward P/E</span><span class="v">9.0x</span></div>
+          <div class="frow"><span class="k">Free Float</span><span class="v">47.9%</span></div>
+        </div>
+        <div class="note">Facts are free-pick: any metric, or a qualitative pair.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">quarterly</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 4px;">Q1 2026</div>
+          <div class="frow"><span class="k">Revenue</span><span class="v">Rp 37.4T</span></div>
+          <div class="frow"><span class="k">Net Income</span><span class="v">Rp 6.1T</span></div>
+          <div class="frow"><span class="k">Operating Cash Flow</span><span class="v">Rp 16.2T</span></div>
+        </div>
+        <div class="note">Title becomes the <b>period</b>; facts come from the quarterly endpoint.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">sectorOverview</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 4px;">Telco Operators</div>
+          <div class="frow"><span class="k">Companies</span><span class="v">14</span></div>
+          <div class="frow"><span class="k">Median P/E</span><span class="v">15.6x</span></div>
+          <div class="frow"><span class="k">Combined Market Cap</span><span class="v">Rp 410T</span></div>
+        </div>
+        <div class="note">Title becomes the <b>sub-sector</b>; facts come from market context.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. RATIO BARS ============ -->
+  <section>
+    <div class="num">P3</div>
+    <h2>RatioBars</h2>
+    <p class="why">Named quantities with proportional bars. Four current kinds are <strong>literally this one component</strong>: only the data source and the highlight rule differ.</p>
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag">gauges</span>
+        <div class="glass">
+          <div class="brow"><div class="bmeta"><span>ROE</span><span>13.9%</span></div><div class="btrack"><div class="bfill" style="width: 56%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>ROA</span><span>6.4%</span></div><div class="btrack"><div class="bfill" style="width: 26%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>Net Margin</span><span>16.3%</span></div><div class="btrack"><div class="bfill" style="width: 65%"></div></div></div>
+        </div>
+        <div class="note">Bars scale against a sane ceiling per metric.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">peerBars</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">Market Cap</div>
+          <div class="brow"><div class="bmeta"><span class="self">TLKM &middot; you are here</span><span>265T</span></div><div class="btrack"><div class="bfill" style="width: 100%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>ISAT</span><span>95T</span></div><div class="btrack"><div class="bfill flat" style="width: 36%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>EXCL</span><span>72T</span></div><div class="btrack"><div class="bfill flat" style="width: 27%"></div></div></div>
+        </div>
+        <div class="note">Self row gets the gradient, peers go neutral. That's the whole difference.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">segments</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">Revenue Mix &middot; FY25</div>
+          <div class="brow"><div class="bmeta"><span>Data &amp; Internet</span><span>58%</span></div><div class="btrack"><div class="bfill" style="width: 58%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>Enterprise</span><span>18%</span></div><div class="btrack"><div class="bfill" style="width: 18%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>Voice &amp; Legacy</span><span>12%</span></div><div class="btrack"><div class="bfill" style="width: 12%"></div></div></div>
+        </div>
+        <div class="note">Parts of a whole; bars are true percentages.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">ownership</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">Major Shareholders</div>
+          <div class="brow"><div class="bmeta"><span>PT Danantara Asset Mgmt</span><span>51.6%</span></div><div class="btrack"><div class="bfill" style="width: 51.6%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>Public</span><span>42.1%</span></div><div class="btrack"><div class="bfill" style="width: 42.1%"></div></div></div>
+          <div class="brow"><div class="bmeta"><span>BNY Mellon (DR)</span><span>5.9%</span></div><div class="btrack"><div class="bfill" style="width: 5.9%"></div></div></div>
+        </div>
+        <div class="note">Same component you saw on the real TLKM slide.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. RANKED ROWS ============ -->
+  <section>
+    <div class="num">P4</div>
+    <h2>RankedRows</h2>
+    <p class="why">Ordered rows: an optional rank, a name, a value, and an optional delta or verdict at the end. Tables, rankings, comparisons and valuation grids are <strong>one row engine</strong>.</p>
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag">ranking</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">Banks by Market Cap</div>
+          <div class="rrow"><span class="rank">1</span><span class="name">BBCA</span><span class="rv">Rp 1,180T</span></div>
+          <div class="rrow"><span class="rank">2</span><span class="name">BBRI</span><span class="rv">Rp 685T</span></div>
+          <div class="rrow"><span class="rank">3</span><span class="name">BMRI</span><span class="rv">Rp 540T</span></div>
+        </div>
+        <div class="note">Rank column on, delta column off.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">comparison</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">Last Price</div>
+          <div class="rrow"><span class="name">TLKM</span><span class="rv">Rp 2,620</span><span class="delta up">+11.5%</span></div>
+          <div class="rrow"><span class="name">ISAT</span><span class="rv">Rp 1,910</span><span class="delta down">-3.2%</span></div>
+          <div class="rrow"><span class="name">EXCL</span><span class="rv">Rp 2,140</span><span class="delta up">+1.8%</span></div>
+        </div>
+        <div class="note">Rank off, delta on. Rows auto-fill from the piece's tickers.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">valuation</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">TLKM vs Peer Median</div>
+          <div class="rrow"><span class="name">P/E</span><span class="rv">9.0x <span style="color: var(--dim); font-weight: 400;">/ 15.6x</span></span><span class="verdict disc">DISCOUNT</span></div>
+          <div class="rrow"><span class="name">P/B</span><span class="rv">1.4x <span style="color: var(--dim); font-weight: 400;">/ 2.1x</span></span><span class="verdict disc">DISCOUNT</span></div>
+          <div class="rrow"><span class="name">P/S</span><span class="rv">1.8x <span style="color: var(--dim); font-weight: 400;">/ 1.6x</span></span><span class="verdict prem">PREMIUM</span></div>
+        </div>
+        <div class="note">Value cell holds the <b>self / peer pair</b>; the tail slot becomes a verdict chip.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">table</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 2px;">Dividend History</div>
+          <div class="rrow"><span class="name">FY25</span><span class="rv">Rp 178/sh</span><span class="delta up">+7%</span></div>
+          <div class="rrow"><span class="name">FY24</span><span class="rv">Rp 167/sh</span><span class="delta up">+3%</span></div>
+          <div class="rrow"><span class="name">FY23</span><span class="rv">Rp 162/sh</span><span class="delta down">-2%</span></div>
+        </div>
+        <div class="note">Manually authored rows ride the same engine.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. CHART ============ -->
+  <section>
+    <div class="num">P5</div>
+    <h2>Chart</h2>
+    <p class="why">Series visualizations sharing one plot area, one caption slot and <strong>one callout channel</strong> (the pill, below, always). No more pins floating over the plot that neither you nor the AI can move.</p>
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag">chart &middot; bar</span>
+        <div class="glass">
+          <div class="lbl" style="margin-bottom: 8px;">Quarterly Revenue</div>
+          <div class="barsviz"><i style="height: 58%"></i><i style="height: 66%"></i><i style="height: 62%"></i><i class="hot" style="height: 84%"></i></div>
+          <div class="sub" style="display: flex; justify-content: space-between;"><span>Q2'25</span><span>Q3'25</span><span>Q4'25</span><span class="goldtx">Q1'26</span></div>
+        </div>
+        <span class="pill"><span class="d pos"></span>Best quarter since 2023</span>
+        <div class="note">Latest period takes the gradient.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">priceArea</span>
+        <div class="glass">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;"><span class="lbl">TLKM &middot; 30D</span><span class="val" style="font-size: 17px;">Rp 2,620 <span class="sub up" style="font-size: 9.5px;">+11.5%</span></span></div>
+          <svg class="spark" width="100%" height="64" viewBox="0 0 220 64" preserveAspectRatio="none">
+            <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(229,51,126,0.4)"/><stop offset="100%" stop-color="rgba(229,51,126,0)"/></linearGradient><linearGradient id="lg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#E5337E"/><stop offset="100%" stop-color="#DF9439"/></linearGradient></defs>
+            <path d="M0,44 L20,40 L40,46 L60,38 L80,42 L100,30 L120,34 L140,24 L160,28 L180,16 L200,20 L220,10 L220,64 L0,64 Z" fill="url(#ag)"/>
+            <path d="M0,44 L20,40 L40,46 L60,38 L80,42 L100,30 L120,34 L140,24 L160,28 L180,16 L200,20 L220,10" fill="none" stroke="url(#lg)" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <span class="pill"><span class="d gld"></span>Rally began on the dividend news</span>
+        <div class="note">Annotation is qualitative; numbers stay in the figure system.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">priceSnapshot</span>
+        <div class="glass" style="display: flex; align-items: center; gap: 12px;">
+          <div style="flex: 1;"><div class="lbl">TLKM</div><div class="val" style="font-size: 19px; white-space: nowrap;">Rp 2,620</div><div class="sub up">+11.49% &middot; 30D</div></div>
+          <svg class="spark" width="74" height="36" viewBox="0 0 74 36" preserveAspectRatio="none"><path d="M0,28 L12,24 L24,27 L36,18 L48,21 L60,10 L74,6" fill="none" stroke="#DF9439" stroke-width="2"/></svg>
+        </div>
+        <div class="note">The compact skin: value left, spark right.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">smallMultiples</span>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="glass" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px;"><div style="flex: 1;"><div class="lbl">TLKM</div><div class="val" style="font-size: 14px;">2,620 <span class="up" style="font-size: 9px;">+11.5%</span></div></div><svg class="spark" width="56" height="22" viewBox="0 0 56 22" preserveAspectRatio="none"><path d="M0,17 L11,14 L22,16 L33,9 L44,11 L56,4" fill="none" stroke="#1FB36A" stroke-width="1.8"/></svg></div>
+          <div class="glass" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px;"><div style="flex: 1;"><div class="lbl">ISAT</div><div class="val" style="font-size: 14px;">1,910 <span class="down" style="font-size: 9px;">-3.2%</span></div></div><svg class="spark" width="56" height="22" viewBox="0 0 56 22" preserveAspectRatio="none"><path d="M0,7 L11,10 L22,8 L33,14 L44,12 L56,17" fill="none" stroke="#E0003B" stroke-width="1.8"/></svg></div>
+          <div class="glass" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px;"><div style="flex: 1;"><div class="lbl">EXCL</div><div class="val" style="font-size: 14px;">2,140 <span class="up" style="font-size: 9px;">+1.8%</span></div></div><svg class="spark" width="56" height="22" viewBox="0 0 56 22" preserveAspectRatio="none"><path d="M0,14 L11,15 L22,11 L33,13 L44,8 L56,7" fill="none" stroke="#1FB36A" stroke-width="1.8"/></svg></div>
+        </div>
+        <div class="note">The snapshot skin, stacked per peer. Today this kind exists but the AI can't even emit it; on one primitive it comes free.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. PROSE ============ -->
+  <section>
+    <div class="num">P6</div>
+    <h2>Prose</h2>
+    <p class="why">Everything written in the brand voice. One rich-text engine, one inline editor, one emphasis system; the kinds are <strong>typographic presets</strong>.</p>
+    <div class="cards">
+      <div class="demo wide">
+        <span class="kindtag">headline</span>
+        <div><div class="kicker" style="margin-bottom: 6px;">Valuation and Yield</div><div class="hl">A <span class="grad">9.0% dividend yield</span> anchors the value case</div></div>
+        <div class="note">Kicker + gradient emphasis are part of the preset, settable by you or the AI.</div>
+      </div>
+      <div class="demo wide">
+        <span class="kindtag">body + bullets</span>
+        <div class="bodyp" style="margin-bottom: 10px;">The market prices margin fear. The payout pays you to wait.</div>
+        <ul class="bull">
+          <li>Forward P/E of 9.0x sits far below the 15.6x sector median</li>
+          <li>11 of 12 analysts keep buy ratings on the counter</li>
+        </ul>
+        <div class="note">Same text engine, list preset adds the gradient markers.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">quote</span>
+        <div class="quote">"Data revenue growth offsets the legacy voice decline for the third consecutive year."</div>
+        <div class="attr">FY25 Annual Report</div>
+        <div class="note">Border + attribution are the preset.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">insight</span>
+        <div><span class="insightlab">Why it matters</span><div class="bodyp" style="color: var(--text);">A yield this far above the sector while payout stays below earnings is rare on the IDX.</div></div>
+        <div class="note">Label chip + emphasis preset; claim stays entailment-gated.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">cta</span>
+        <div style="text-align: center; padding: 8px 0;"><div class="hl" style="font-size: 16px;">Follow <span class="grad">@sectorsid</span> for daily IDX stories</div><div class="sub" style="margin-top: 4px;">sectors.app</div></div>
+        <div class="note">Centered preset, outro only.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. EVENT CARD ============ -->
+  <section>
+    <div class="num">P7</div>
+    <h2>EventCard</h2>
+    <p class="why">A structured record: a <strong>verb chip, a subject, and a fact grid</strong> (or a dated sequence). Filings, timelines, IPO windows and management all fit this anatomy.</p>
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag">transaction</span>
+        <div class="glass" style="display: flex; flex-direction: column; gap: 9px;">
+          <span class="verb buy">BOUGHT</span>
+          <div class="holder">Haryanto Tiara Budiman</div>
+          <div class="fgrid">
+            <div class="fcell"><div class="k">Shares</div><div class="v">379,428</div></div>
+            <div class="fcell"><div class="k">Value</div><div class="v">Rp 2.6B</div></div>
+            <div class="fcell"><div class="k">Stake Before</div><div class="v">0.010%</div></div>
+            <div class="fcell"><div class="k">Stake After</div><div class="v">0.011%</div></div>
+          </div>
+        </div>
+        <div class="note">The verb chip knows <b>transferred</b> too (structural filings stay neutral).</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">timeline</span>
+        <div class="glass">
+          <div class="tl">
+            <div class="tlrow"><span class="dot2"></span><div><div class="dt">2 Jun 2026</div><div class="ev">FY25 dividend approved at AGMS</div></div></div>
+            <div class="tlrow"><span class="dot2"></span><div><div class="dt">5 Jun 2026</div><div class="ev">Cum date on the regular market</div></div></div>
+            <div class="tlrow"><span class="dot2"></span><div><div class="dt">18 Jun 2026</div><div class="ev">Payment date</div></div></div>
+          </div>
+        </div>
+        <div class="note">The dated-sequence skin of the same card.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">ipoPerformance</span>
+        <div class="glass" style="display: flex; flex-direction: column; gap: 9px;">
+          <span class="verb neutral">LISTED 12 MAY 2026</span>
+          <div class="fgrid">
+            <div class="fcell"><div class="k">+7 Days</div><div class="v up">+12.4%</div></div>
+            <div class="fcell"><div class="k">+30 Days</div><div class="v up">+8.1%</div></div>
+            <div class="fcell"><div class="k">+90 Days</div><div class="v down">-3.0%</div></div>
+            <div class="fcell"><div class="k">Vs IPO Price</div><div class="v up">+5.6%</div></div>
+          </div>
+        </div>
+        <div class="note">Return windows ride the fact grid.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">management</span>
+        <div class="glass">
+          <div class="frow"><span class="k" style="color: var(--text); font-weight: 600;">Ririek Adriansyah</span><span class="v" style="color: var(--muted); font-weight: 400; font-size: 10.5px;">President Director</span></div>
+          <div class="frow"><span class="k" style="color: var(--text); font-weight: 600;">Heri Supriadi</span><span class="v" style="color: var(--muted); font-weight: 400; font-size: 10.5px;">Finance Director</span></div>
+          <div class="frow"><span class="k" style="color: var(--text); font-weight: 600;">Honesti Basyir</span><span class="v" style="color: var(--muted); font-weight: 400; font-size: 10.5px;">IT Director</span></div>
+        </div>
+        <div class="note">People are subject rows without a verb.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8. MEDIA ============ -->
+  <section>
+    <div class="num">P8</div>
+    <h2>Media</h2>
+    <p class="why">Logos, images, and the ticker chip, <strong>finally a block</strong>. Aspect-locked resize, swappable reference, deletable like anything else.</p>
+    <div class="cards">
+      <div class="demo">
+        <span class="kindtag new">tickerChip (new)</span>
+        <div style="display: flex; gap: 8px;"><span class="chip"><span class="clogo"></span>$TLKM</span><span class="chip" style="opacity: 0.65;"><span class="clogo"></span>$ISAT</span></div>
+        <div class="note">The cover chip becomes this block: swap ticker, add a second, or delete. The bug from part 1 becomes user-fixable.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">logo</span>
+        <div class="glass logocard"><div class="biglogo">TL</div><div class="sub">PT Telkom Indonesia (Persero) Tbk</div></div>
+        <div class="note">Company mark + caption, resolved from the ticker.</div>
+      </div>
+      <div class="demo">
+        <span class="kindtag">media</span>
+        <div class="imgmock"><span>image &middot; fit: cover</span></div>
+        <div class="note">Uploaded or referenced image; cover/contain switch in the inspector (today that switch doesn't exist).</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">Concept visuals only &middot; part 2 of the editor overhaul concept &middot; 2026-06-10 &middot; values are illustrative, not live Sectors data</div>
+
+</div>
+</body>
+</html>

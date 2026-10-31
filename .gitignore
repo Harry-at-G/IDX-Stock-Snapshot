@@ -1,0 +1,13 @@
+# Secrets: never upload these
+.env
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Mac and external-drive clutter
+.DS_Store
+._*
