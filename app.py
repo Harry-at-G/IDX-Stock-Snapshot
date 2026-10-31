@@ -64,8 +64,10 @@ st.markdown(
         .stApp [data-testid="stVegaLiteChart"] {{
             background-color: {background_color};
         }}
-        .stApp [data-testid="stVegaLiteChart"] svg text {{
-            fill: {text_color};
+        .stApp [data-testid="stVegaLiteChart"] svg text,
+        .stApp [data-testid="stVegaLiteChart"] svg tspan {{
+            fill: {text_color} !important;
+            color: {text_color} !important;
         }}
     </style>
     """,
